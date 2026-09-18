@@ -10,7 +10,13 @@ Unchanged from the original mod: KIS-attach one plug to the Central Station and 
 
 ## Upgrade note
 
-Plugs that already existed in KIS inventories or on vessels **before** installing this patch keep their old part snapshot (without the KAS modules) and will throw an error when linking. Re-create them in the VAB.
+Plugs that already existed **before** installing this patch keep their old part snapshot (without the KAS modules) and will throw a `NullReferenceException` in `KASRendererPipe` when linking. KSP Community Fixes warns about it in the log as `ModuleIndexingMismatch ... KASLinkSourceInteractive`. Old snapshots live in three places:
+
+- plugs on vessels and in KIS inventories in your save (`persistent.sfs`);
+- plugs inside KIS containers of **saved craft files** (`.craft`) — the container keeps the snapshot from when the plug was put in, so every launch of that craft brings old plugs;
+- the editor's autosave (`Auto-Saved Ship.craft`).
+
+Fix: in the editor, take the plugs out of the container and add fresh ones from the part list, then save the craft; plugs already in flight or in a kerbal's inventory must be recreated. Alternatively, with the game closed, run [`tools/fix-plug-snapshots.py`](tools/fix-plug-snapshots.py) from this repository on the affected `.craft`/`.sfs` files — it injects the KAS modules into every old `SEP.plug` snapshot and keeps a backup of each file.
 
 ## Install
 
